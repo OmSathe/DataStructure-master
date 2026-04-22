@@ -1,4 +1,4 @@
-# 📘 DS Practice Tool (Python)
+# 📘 DS Practice Tool (Python) DataStructure-master
 
 A desktop-based coding practice IDE designed to help prepare for technical interviews by focusing on core data structures and algorithms.
 
@@ -55,9 +55,9 @@ This tool provides a structured environment where users implement fundamental co
 
 1. Clone the repository:
 
-git clone https://github.com/OmSathe/ds-practice-tool.git
+git clone https://github.com/OmSathe/DataStructure-master.git
 
-cd ds-practice-tool
+cd DataStructure-master
 
 
 2. Install dependencies:
