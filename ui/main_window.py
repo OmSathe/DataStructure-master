@@ -28,8 +28,8 @@ class MainWindow(QMainWindow):
         self.current_problem = None
 
         self.setup_ui()
-        self.load_problem_list()
         self.apply_styles()
+        self.load_problem_list()
         self.update_streak_label()
 
         if PROBLEMS:
@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
         self.streak_label.setObjectName("streakLabel")
 
         self.problem_list = QListWidget()
-        self.problem_list.setMinimumWidth(300)
+        self.problem_list.setMinimumWidth(320)
         self.problem_list.currentRowChanged.connect(self.load_problem)
 
         sidebar_layout = QVBoxLayout()
@@ -63,10 +63,6 @@ class MainWindow(QMainWindow):
 
         self.header_subtitle = QLabel("Practice interview-style Python problems with instant feedback.")
         self.header_subtitle.setObjectName("headerSubtitle")
-
-        header_layout = QVBoxLayout()
-        header_layout.addWidget(self.header_title)
-        header_layout.addWidget(self.header_subtitle)
 
         self.problem_title_label = QLabel("Select a problem")
         self.problem_title_label.setObjectName("problemTitle")
@@ -104,6 +100,10 @@ class MainWindow(QMainWindow):
         self.output_box.setReadOnly(True)
         self.output_box.setFont(QFont("Consolas", 10))
 
+        header_layout = QVBoxLayout()
+        header_layout.addWidget(self.header_title)
+        header_layout.addWidget(self.header_subtitle)
+
         main_layout = QVBoxLayout()
         main_layout.addLayout(header_layout)
         main_layout.addSpacing(8)
@@ -124,7 +124,7 @@ class MainWindow(QMainWindow):
         splitter.addWidget(main_widget)
         splitter.setStretchFactor(0, 1)
         splitter.setStretchFactor(1, 4)
-        splitter.setSizes([320, 1030])
+        splitter.setSizes([340, 1010])
 
         container = QWidget()
         container_layout = QHBoxLayout()
@@ -138,8 +138,7 @@ class MainWindow(QMainWindow):
         self.problem_list.clear()
 
         for problem in PROBLEMS:
-            item_text = f"{problem.category} • {problem.title}"
-            item = QListWidgetItem(item_text)
+            item = QListWidgetItem(f"{problem.category} • {problem.title}")
             self.problem_list.addItem(item)
 
         self.update_problem_colors()
@@ -157,17 +156,17 @@ class MainWindow(QMainWindow):
             is_selected = i == current_row
 
             if completed_today and is_selected:
-                item.setBackground(QColor("#166534"))   # selected + completed
-                item.setForeground(QColor("#f0fdf4"))
+                item.setBackground(QColor("#22c55e"))
+                item.setForeground(QColor("#04130a"))
             elif completed_today:
-                item.setBackground(QColor("#14532d"))   # completed
-                item.setForeground(QColor("#f0fdf4"))
+                item.setBackground(QColor("#166534"))
+                item.setForeground(QColor("#dcfce7"))
             elif is_selected:
-                item.setBackground(QColor("#2563eb"))   # selected normal
-                item.setForeground(QColor("#ffffff"))
+                item.setBackground(QColor("#15803d"))
+                item.setForeground(QColor("#f0fdf4"))
             else:
-                item.setBackground(QColor("#111827"))   # normal
-                item.setForeground(QColor("#e5e7eb"))
+                item.setBackground(QColor("#0b0f0c"))
+                item.setForeground(QColor("#d1fae5"))
 
     def update_streak_label(self):
         streak = get_streak()
@@ -181,7 +180,6 @@ class MainWindow(QMainWindow):
             return
 
         self.current_problem = PROBLEMS[index]
-
         self.problem_title_label.setText(self.current_problem.title)
         self.problem_category_label.setText(f"Category: {self.current_problem.category}")
         self.prompt_label.setText(self.current_problem.prompt)
@@ -233,39 +231,126 @@ class MainWindow(QMainWindow):
     def apply_styles(self):
         self.setStyleSheet("""
             QMainWindow {
-                background-color: #0f172a;
+                background-color: #050807;
             }
 
             QWidget {
-                background-color: #0f172a;
-                color: #e5e7eb;
+                background-color: #050807;
+                color: #ecfdf5;
+                font-size: 14px;
+            }
+
+            QLabel#headerTitle {
+                font-size: 30px;
+                font-weight: bold;
+                color: #bbf7d0;
+                padding-bottom: 2px;
+            }
+
+            QLabel#headerSubtitle {
+                font-size: 14px;
+                color: #86efac;
+                padding-bottom: 10px;
+            }
+
+            QLabel#sidebarTitle {
+                font-size: 22px;
+                font-weight: bold;
+                color: #dcfce7;
+                padding-bottom: 2px;
+            }
+
+            QLabel#sidebarSubtext {
+                font-size: 13px;
+                color: #86efac;
+                padding-bottom: 4px;
+            }
+
+            QLabel#streakLabel {
+                font-size: 14px;
+                font-weight: bold;
+                color: #dcfce7;
+                background-color: #0f2e1b;
+                border: 1px solid #22c55e;
+                border-radius: 10px;
+                padding: 8px;
+                margin-bottom: 8px;
+            }
+
+            QLabel#problemTitle {
+                font-size: 28px;
+                font-weight: bold;
+                color: #dcfce7;
+                padding-top: 6px;
+            }
+
+            QLabel#problemCategory {
+                font-size: 13px;
+                color: #4ade80;
+                padding-bottom: 8px;
+            }
+
+            QLabel#sectionLabel {
+                font-size: 15px;
+                font-weight: bold;
+                color: #bbf7d0;
+                padding-top: 8px;
+                padding-bottom: 4px;
+            }
+
+            QLabel#promptBox {
+                background-color: #0b120d;
+                border: 1px solid #166534;
+                border-radius: 12px;
+                padding: 14px;
+                color: #ecfdf5;
+                margin-bottom: 8px;
             }
 
             QListWidget {
-                background-color: #111827;
-                border-radius: 10px;
+                background-color: #08100a;
+                border: 1px solid #14532d;
+                border-radius: 12px;
                 padding: 8px;
+                outline: none;
             }
 
             QListWidget::item {
-                border-radius: 8px;
+                border-radius: 10px;
                 padding: 10px;
+                margin-bottom: 4px;
             }
 
             QTextEdit {
-                background-color: #111827;
-                border-radius: 10px;
+                background-color: #08100a;
+                border: 1px solid #14532d;
+                border-radius: 12px;
                 padding: 10px;
+                color: #ecfdf5;
+                selection-background-color: #166534;
+                selection-color: #f0fdf4;
             }
 
             QPushButton {
-                background-color: #2563eb;
-                color: white;
+                background-color: #16a34a;
+                color: #f0fdf4;
+                border: none;
                 border-radius: 10px;
-                padding: 10px;
+                padding: 10px 16px;
+                font-weight: bold;
+                min-width: 120px;
             }
 
             QPushButton:hover {
-                background-color: #1d4ed8;
+                background-color: #15803d;
+            }
+
+            QPushButton:pressed {
+                background-color: #166534;
+            }
+
+            QSplitter::handle {
+                background-color: #14532d;
+                width: 2px;
             }
         """)
