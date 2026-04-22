@@ -55,7 +55,7 @@ This tool provides a structured environment where users implement fundamental co
 
 1. Clone the repository:
 
-git clone https://github.com/your-username/ds-practice-tool.git
+git clone https://github.com/OmSathe/ds-practice-tool.git
 
 cd ds-practice-tool
 
