@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
     QListWidgetItem,
 )
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont, QColor
+from PyQt6.QtGui import QFont, QColor, QBrush
 
 from problems.problem_bank import PROBLEMS
 from utils.runner import execute_user_code, run_problem_tests
@@ -49,15 +49,6 @@ class MainWindow(QMainWindow):
         self.problem_list.setMinimumWidth(320)
         self.problem_list.currentRowChanged.connect(self.load_problem)
 
-        sidebar_layout = QVBoxLayout()
-        sidebar_layout.addWidget(self.sidebar_title)
-        sidebar_layout.addWidget(self.problem_count_label)
-        sidebar_layout.addWidget(self.streak_label)
-        sidebar_layout.addWidget(self.problem_list)
-
-        sidebar_widget = QWidget()
-        sidebar_widget.setLayout(sidebar_layout)
-
         self.header_title = QLabel("datastructure-master")
         self.header_title.setObjectName("headerTitle")
 
@@ -88,11 +79,6 @@ class MainWindow(QMainWindow):
         self.reset_button = QPushButton("Reset Code")
         self.reset_button.clicked.connect(self.reset_code)
 
-        button_layout = QHBoxLayout()
-        button_layout.addWidget(self.run_button)
-        button_layout.addWidget(self.reset_button)
-        button_layout.addStretch()
-
         self.output_label = QLabel("Output")
         self.output_label.setObjectName("sectionLabel")
 
@@ -100,9 +86,23 @@ class MainWindow(QMainWindow):
         self.output_box.setReadOnly(True)
         self.output_box.setFont(QFont("Consolas", 10))
 
+        sidebar_layout = QVBoxLayout()
+        sidebar_layout.addWidget(self.sidebar_title)
+        sidebar_layout.addWidget(self.problem_count_label)
+        sidebar_layout.addWidget(self.streak_label)
+        sidebar_layout.addWidget(self.problem_list)
+
+        sidebar_widget = QWidget()
+        sidebar_widget.setLayout(sidebar_layout)
+
         header_layout = QVBoxLayout()
         header_layout.addWidget(self.header_title)
         header_layout.addWidget(self.header_subtitle)
+
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(self.run_button)
+        button_layout.addWidget(self.reset_button)
+        button_layout.addStretch()
 
         main_layout = QVBoxLayout()
         main_layout.addLayout(header_layout)
@@ -156,17 +156,22 @@ class MainWindow(QMainWindow):
             is_selected = i == current_row
 
             if completed_today and is_selected:
-                item.setBackground(QColor("#22c55e"))
-                item.setForeground(QColor("#04130a"))
+                bg = QColor("#22c55e")   # bright green
+                fg = QColor("#04130a")
             elif completed_today:
-                item.setBackground(QColor("#166534"))
-                item.setForeground(QColor("#dcfce7"))
+                bg = QColor("#166534")   # dark green
+                fg = QColor("#dcfce7")
             elif is_selected:
-                item.setBackground(QColor("#15803d"))
-                item.setForeground(QColor("#f0fdf4"))
+                bg = QColor("#16a34a")   # selected but incomplete
+                fg = QColor("#f0fdf4")
             else:
-                item.setBackground(QColor("#0b0f0c"))
-                item.setForeground(QColor("#d1fae5"))
+                bg = QColor("#08100a")   # default
+                fg = QColor("#bbf7d0")
+
+            item.setBackground(QBrush(bg))
+            item.setForeground(QBrush(fg))
+
+        self.problem_list.viewport().update()
 
     def update_streak_label(self):
         streak = get_streak()
@@ -213,7 +218,6 @@ class MainWindow(QMainWindow):
         final_result = run_problem_tests(self.current_problem, execution_result["namespace"])
 
         output_parts = []
-
         if execution_result["stdout"]:
             output_parts.append("Console Output:")
             output_parts.append(execution_result["stdout"])
@@ -316,7 +320,7 @@ class MainWindow(QMainWindow):
             }
 
             QListWidget::item {
-                border-radius: 10px;
+                border: none;
                 padding: 10px;
                 margin-bottom: 4px;
             }

@@ -1,33 +1,47 @@
+from pathlib import Path
 import json
-import os
 from datetime import date, datetime
 
-FILE_PATH = "progress.json"
+BASE_DIR = Path(__file__).resolve().parent.parent
+FILE_PATH = BASE_DIR / "progress.json"
 
 
 def load_progress():
-    if not os.path.exists(FILE_PATH):
+    if not FILE_PATH.exists():
         return {
             "completed": {},
             "streak": 0,
             "last_completed_date": None
         }
 
-    with open(FILE_PATH, "r") as f:
-        return json.load(f)
+    try:
+        with open(FILE_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, FileNotFoundError):
+        return {
+            "completed": {},
+            "streak": 0,
+            "last_completed_date": None
+        }
+
+    if "completed" not in data:
+        data["completed"] = {}
+    if "streak" not in data:
+        data["streak"] = 0
+    if "last_completed_date" not in data:
+        data["last_completed_date"] = None
+
+    return data
 
 
 def save_progress(data):
-    with open(FILE_PATH, "w") as f:
+    with open(FILE_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4)
 
 
 def mark_completed(problem_title):
     progress = load_progress()
     today = str(date.today())
-
-    if "completed" not in progress:
-        progress["completed"] = {}
 
     progress["completed"][problem_title] = today
 
@@ -55,8 +69,7 @@ def mark_completed(problem_title):
 def is_completed_today(problem_title):
     progress = load_progress()
     today = str(date.today())
-    completed = progress.get("completed", {})
-    return completed.get(problem_title) == today
+    return progress["completed"].get(problem_title) == today
 
 
 def get_streak():
