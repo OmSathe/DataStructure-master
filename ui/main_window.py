@@ -134,6 +134,24 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(container)
 
+    def update_problem_colors(self):
+        for i, problem in enumerate(PROBLEMS):
+            item = self.problem_list.item(i)
+
+            if item is None:
+                continue
+
+            prefix = "✅ " if is_completed_today(problem.title) else ""
+            item.setText(f"{prefix}{problem.category} • {problem.title}")
+
+            # ONLY control non-selected items
+            if is_completed_today(problem.title):
+                item.setBackground(QColor("#14532d"))
+                item.setForeground(QColor("#dcfce7"))
+            else:
+                item.setBackground(QColor("#08100a"))
+                item.setForeground(QColor("#bbf7d0"))
+
     def load_problem_list(self):
         self.problem_list.clear()
 
@@ -143,35 +161,7 @@ class MainWindow(QMainWindow):
 
         self.update_problem_colors()
 
-    def update_problem_colors(self):
-        current_row = self.problem_list.currentRow()
 
-        for i, problem in enumerate(PROBLEMS):
-            item = self.problem_list.item(i)
-
-            if item is None:
-                continue
-
-            completed_today = is_completed_today(problem.title)
-            is_selected = i == current_row
-
-            if completed_today and is_selected:
-                bg = QColor("#22c55e")   # bright green
-                fg = QColor("#04130a")
-            elif completed_today:
-                bg = QColor("#166534")   # dark green
-                fg = QColor("#dcfce7")
-            elif is_selected:
-                bg = QColor("#16a34a")   # selected but incomplete
-                fg = QColor("#f0fdf4")
-            else:
-                bg = QColor("#08100a")   # default
-                fg = QColor("#bbf7d0")
-
-            item.setBackground(QBrush(bg))
-            item.setForeground(QBrush(fg))
-
-        self.problem_list.viewport().update()
 
     def update_streak_label(self):
         streak = get_streak()
@@ -190,6 +180,16 @@ class MainWindow(QMainWindow):
         self.prompt_label.setText(self.current_problem.prompt)
         self.editor.setPlainText(self.current_problem.starter_code)
         self.output_box.clear()
+        self.update_problem_colors()
+    
+    def load_problem_list(self):
+        self.problem_list.clear()
+
+        for problem in PROBLEMS:
+            prefix = "✅ " if is_completed_today(problem.title) else ""
+            item = QListWidgetItem(f"{prefix}{problem.category} • {problem.title}")
+            self.problem_list.addItem(item)
+
         self.update_problem_colors()
 
     def reset_code(self):
@@ -357,4 +357,10 @@ class MainWindow(QMainWindow):
                 background-color: #14532d;
                 width: 2px;
             }
+                           
+            QListWidget::item:selected {
+                background-color: #22c55e;
+                color: #022c22;
+                border-radius: 8px;
+            }               
         """)
